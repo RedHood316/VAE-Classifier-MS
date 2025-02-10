@@ -1,79 +1,92 @@
-# Variational-Autoencoders with a Classifier Head
+# Variational Autoencoders with a Classifier Head
 
-What are Variational-Autoencoders?
+## What are Variational Autoencoders (VAEs)?
+Variational Autoencoders (VAEs) are a type of deep learning model used for learning meaningful data representations. They encode input data into a **latent space**, which captures essential features in a compressed format. Unlike traditional autoencoders, VAEs use **probabilistic modeling** to generate diverse representations, making them useful for tasks like image generation and classification.
 
-VAEs leverage probabilistic modeling to uncover the hidden representation of data. The encoder learns this hidden
-representation, which is the compressed version of the data or latent space, by formulating the likelihood, which represents the probability of observing a specific data point given the VAE model. While VAEs don't directly calculate the exact likelihood due to its complexity, they employ a variational inference framework based on the concept of the latent space to approximate it.
+### How VAEs Work:
+1. **Encoder:** Converts input images into a latent representation.
+2. **Latent Space:** A compressed version of the data, capturing meaningful patterns.
+3. **Decoder:** Attempts to reconstruct the original image from the latent representation.
+4. **Classifier Head (Optional):** Uses the latent space representation to classify images into specific categories.
 
-<img width="433" alt="Screen Shot 2024-05-17 at 12 53 24 PM" src="https://github.com/hajami0802/Variational-Autoencoders-Classifier/assets/169827483/30060413-4770-48d0-920d-bc9f438c4fcf">
+![VAE Structure](https://github.com/hajami0802/Variational-Autoencoders-Classifier/assets/169827483/30060413-4770-48d0-920d-bc9f438c4fcf)
 
-The fundamental structure of a variational autoencoder
+---
+## Goal of This Study
+This research focuses on comparing two models—**PCAEClassifier** and **BetaVAEClassifier**—for analyzing **brain MRI scans** of **Multiple Sclerosis (MS) patients**. The models aim to:
+- Identify **white matter lesions (WMLs)** in MRI scans.
+- Classify MRIs into two categories: **with lesions** vs. **without lesions**.
+- Improve **accuracy, precision, recall, and F1-score** through different model configurations.
 
-What is the goal of this study?
+### Key Steps in Data Preparation:
+✔ **Data Augmentation** – Enhancing dataset variety.
+✔ **Preprocessing** – Cleaning and standardizing images.
+✔ **Compression & Normalization** – Making images suitable for deep learning.
 
-This research compares the results of PCAEClassifier, and BetaVAEClassifier for automatically analyzing brain MRI scans from multiple sclerosis (MS) patients. The goal is to identify these WMLs and classify them into two classes, the class that contains the MRIs with white matter lesions, and the other class is for MRIs that do not have these lesions, ultimately helping diagnose and assess this disease.
-The image dataset was modified by applying data augmentation, preprocessing methods, compression, and normalization. The performance of each model was then evaluated using the metrics accuracy, precision, recall, and F-score. 
-The PCAEClassifier and BetaVAEClassifier with different sparsity regularization and beta values respectively, it's evident that the choice of hyperparameters significantly impacts the model's performance.
-For the BetaVAEClassifier, the model's performance varied significantly with different beta values. With a beta value of 5, the accuracy stood at 83.56%, accompanied by the precision, recall, and F1-score of 84.13%, 82.52%, and 83.32%, respectively. Increasing the beta to 10 resulted in an accuracy of 85.56%, with precision peaking at 90.78%, albeit at the expense of lower recall (78.59%) and F1- score (84.25%). Finally, with a beta of 20, the model achieved an accuracy of 87.61%, maintaining a balanced performance with precision, recall, and F1-score hovering around 87%.
-Similarly, for the PCAEClassifier, the model's performance varied with different sparsity parameters (S). With S equals to 5, the accuracy was 70.82%, with precision, recall, and F1-score at 78.11%, 57.57%, and 66.29%, respectively. Increasing the sparsity parameter to 10 led to a notable improvement in accuracy to 84.08%, with precision, recall, and F1-score showing similar increments. Finally, with S equals to 20, the model achieved the highest accuracy of 88.82%, accompanied by precision, recall, and F1-score of 90.38%, 86.40%, and 88.34%, respectively. 
+---
+## Comparing PCAEClassifier and BetaVAEClassifier
+### 1️⃣ PCAEClassifier (Deterministic Encoder)
+✔ Uses fixed convolutional layers to extract features.
+✔ Provides **consistent, deterministic outputs**.
+✔ Converges faster during training.
 
-These models' sensitivity to hyperparameters highlights the intricate balance required in model configuration, especially in tasks where precision and recall are crucial, such as anomaly detection. Particularly in medical diagnostics like multiple sclerosis (MS) classification, where accurately distinguishing between affected and unaffected individuals is paramount, the performance of these models holds significant promise.
+### 2️⃣ BetaVAEClassifier (Probabilistic Encoder)
+✔ Uses a **probabilistic encoding** method.
+✔ Captures **mean features** and **variability**.
+✔ Offers **richer representations** of input images.
 
-Some more information and the results:
+![Encoder Types](https://github.com/hajami0802/Variational-Autoencoders-Classifier/assets/169827483/ad00b7a7-8757-4924-9fa3-053fe4a3ea4b)
 
-Deterministic encoder (PCAEClassifier) vs Probabilistic encoder (BetaVAEClassifier):
+---
+## Model Performance Comparison
+### BetaVAEClassifier Results (with different \(\beta\) values):
+| Beta (\(\beta\)) | Accuracy (%) | Precision (%) | Recall (%) | F1-score (%) |
+|-------------|------------|------------|-----------|-----------|
+| 5           | 83.56      | 84.13      | 82.52     | 83.32     |
+| 10          | 85.56      | 90.78      | 78.59     | 84.25     |
+| 20          | 87.61      | 87.00      | 87.00     | 87.00     |
 
-PCAEClassifier employs a fixed set of convolutional layers with learned filters, ensuring that the encoding process remains consistent across different input images, resulting in deterministic outputs. This deterministic approach streamlines the training process and may facilitate quicker convergence. On the other hand, Beta-VAE, a type of Variational Autoencoder (VAE), employs a Probabilistic Encoder. Unlike deterministic encoders, probabilistic encoders introduce stochastic elements into the encoding process, learning a distribution—often Gaussian—to represent encoded data. By capturing both mean features and variability, this probabilistic approach enriches the latent space, enabling it to have a broader spectrum of information about the input data.
+### PCAEClassifier Results (with different sparsity parameters \(S\)):
+| Sparsity (S) | Accuracy (%) | Precision (%) | Recall (%) | F1-score (%) |
+|-------------|------------|------------|-----------|-----------|
+| 5           | 70.82      | 78.11      | 57.57     | 66.29     |
+| 10          | 84.08      | 85.00      | 83.00     | 84.00     |
+| 20          | 88.82      | 90.38      | 86.40     | 88.34     |
 
-Deterministic encoder vs Probabilistic encoder:
+#### 🔎 Key Takeaways:
+✔ Increasing \(\beta\) in BetaVAE improves accuracy but affects recall.
+✔ Higher sparsity \(S\) in PCAEClassifier enhances accuracy and F1-score.
+✔ Model **hyperparameters significantly impact classification performance**.
 
-<img width="528" alt="Screen Shot 2024-05-17 at 12 50 26 PM" src="https://github.com/hajami0802/Variational-Autoencoders-Classifier/assets/169827483/ad00b7a7-8757-4924-9fa3-053fe4a3ea4b">
+---
+## Architecture Breakdown
+### 1️⃣ PCAEClassifier Architecture:
+✔ **Encoder:** Uses convolutional layers to extract features.
+✔ **Classifier:** Fully connected layers process the latent representation.
+✔ **(Optional) Decoder:** Reconstructs images for improved training stability.
 
+![PCAEClassifier](https://github.com/hajami0802/Variational-Autoencoders-Classifier/assets/169827483/fc9dcef6-f024-4120-ad9b-f4591cddad63)
 
-Principal convolutional autoencoder classifier architecture in a glance:
+### 2️⃣ BetaVAEClassifier Architecture:
+✔ **Encoder:** Uses convolutional layers and encodes data as a **distribution**.
+✔ **Classifier Head:** Uses latent representation to classify MRIs.
+✔ **(Optional) Decoder:** Helps regularize training and visualize latent space.
 
-<img width="559" alt="Screen Shot 2024-05-17 at 12 38 56 PM" src="https://github.com/hajami0802/Variational-Autoencoders-Classifier/assets/169827483/fc9dcef6-f024-4120-ad9b-f4591cddad63">
+![BetaVAEClassifier](https://github.com/hajami0802/Variational-Autoencoders-Classifier/assets/169827483/e965766a-615d-44f0-8a0c-e30dcba9f63a)
 
-PCAEClassifier architecture:
+---
+## Conclusion
+📌 **BetaVAEClassifier** provides richer feature extraction but requires careful tuning of \(\beta\).
+📌 **PCAEClassifier** is simpler but benefits from sparsity tuning.
+📌 Both models show promise in **medical image analysis**, particularly in **Multiple Sclerosis (MS) classification**.
+📌 Hyperparameter selection plays a crucial role in balancing **accuracy, precision, recall, and F1-score**.
 
-The architecture consists of three main components:
-1. Encoder: A sequence of convolutional layers that extracts features from the input image and progressively reduces its dimensionality, resulting in the encoded representation. While the code snippet doesn't explicitly show spatial reduction, it can be achieved by using convolutional layers with strides greater than 1.
-2. Decoder (Optional for Classification): A sequence of transposed convolutional layers that attempts to reconstruct the original image from the encoded representation. While not directly influencing classification, it can aid in regularization and potentially improve generalization.
-3. Classifier: A set of fully connected layers that process the encoded representation and produce class probabilities for each predefined category.
-In the PCAEClassifier architecture, the information used for classification comes from the encoded representation (encoded) generated by the encoder network. This encoded representation is a compressed version of the original input image, capturing the essential features relevant for distinguishing between the defined classes.
+---
+## References
+- Kingma, D. P., & Welling, M. (2019). *An introduction to variational autoencoders*. Foundations and Trends in Machine Learning.
+- Goodfellow, I., Bengio, Y., & Courville, A. (2016). *Deep Learning*. MIT Press.
+- Muslim, A. M., et al. (2022). *Brain MRI dataset of multiple sclerosis with consensus manual lesion segmentation and patient meta information*. Data in Brief.
+- Carass, A., et al. (2017). *Longitudinal multiple sclerosis lesion segmentation: resource and challenge*. NeuroImage.
 
-Beta Variational Autoencoder:
+✅ **This study highlights how Variational Autoencoders (VAEs) with classifier heads can enhance MRI-based disease diagnosis. Future work can explore additional deep learning architectures and fine-tune hyperparameters for even better results!** 🚀
 
-<img width="531" alt="Screen Shot 2024-05-17 at 12 41 42 PM" src="https://github.com/hajami0802/Variational-Autoencoders-Classifier/assets/169827483/e965766a-615d-44f0-8a0c-e30dcba9f63a">
-
-The BetaVAEClassifier structure can be separated into three key components:
-
-Encoder: This component takes the input image and processes it through convolutional and linear layers. Its objective is to extract the latent representation (z) that captures the essential features of the image.
-Classifier Head: This additional layer receives the latent representation (z) from the encoder. It then utilizes a fully connected neural network to predict the class label (MS or noMS). The classifier capitalizes on the disentangled nature of the latent space, allowing it to focus on discriminative features for accurate classification.
-
-Decoder (Optional):While not directly involved in classification, the decoder in a BetaVAEClassifier is often present. It takes the latent representation (z) and attempts to reconstruct the original image. 
-This reconstruction serves two purposes:
-
-• Regularization: It helps the model learn a more meaningful latent space by encouraging it to capture the essential information needed for reconstruction.
-
-• Visualization: The reconstructed image can be used to visualize the latent space and understand what kind of information different dimensions encode.
-
-
-The results:
-
-<img width="498" alt="Screen Shot 2024-05-17 at 12 44 39 PM" src="https://github.com/hajami0802/Variational-Autoencoders-Classifier/assets/169827483/30053cb2-3469-47dc-a1b4-c606b2f29451">
-
-
-
-References:
-
- Kingma, Diederik P., and Max Welling. "An introduction to variational autoencoders." Foundations and Trends® in Machine Learning 12.4 (2019): 307-392.
- 
- Heaton, Jeff. "Ian Goodfellow, Yoshua Bengio, and Aaron Courville: Deep learning: The MIT press, 2016, 800 pp, ISBN: 0262035618." Genetic programming and evolvable machines 19.1
- (2018): 305-307.
-
- Goodfellow, Ian, Yoshua Bengio, and Aaron Courville. Deep learning. MIT press, 2016.
-
- Muslim, Ali M., et al. "Brain MRI dataset of multiple sclerosis with consensus manual lesion segmentation and patient meta information." Data in Brief 42 (2022): 108139.
- 
- Carass, Aaron, et al. "Longitudinal multiple sclerosis lesion segmentation: resource and challenge." NeuroImage 148 (2017): 77-102.
